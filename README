@@ -1,27 +1,19 @@
-dic = {
-    "username": "taghred",
-    "pass": "20232024",
-    "name": "taghred aswad",
-    "age": 30,
-    "mail": "tota@mail.ru",
-}
-
-attempts3 = 3
-attempts = 0
-
-while attempts < attempts3:
-    User = input("Enter Your Username: ")
-    Pass = input("Enter Your Password: ")
-
-    if User == dic["username"] and Pass == dic["pass"]:
-        print(f"Welcome {dic['name']}\nYour Age is {dic['age']}\nYour Mail is {dic['mail']}")
-        break
-    else:
-        attempts += 1
-        remaining = attempts3 - attempts
-        
-        if remaining > 0:
-            print(f"Username or Password Wrong — {remaining} attempt left\n")
-        else:
-            dic.clear()
-            print("Account locked")
+import hashlib
+import requests
+pwd = input("Enter Pass To Cheack :")
+def check_password(password):
+    sha = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
+    passchr5 = sha[:5] 
+    bakpass = sha[5:]
+    resp = requests.get(f"https://api.pwnedpasswords.com/range/{passchr5}")
+    resp.raise_for_status()
+    for line in resp.text.splitlines():
+        offcpass, count = line.split(':')
+        if offcpass == bakpass:
+            return int(count)
+    return 0
+times = check_password(pwd)
+if times:
+    print(f"Dont Use it Leaked {times} times")
+else:
+    print("Not Leaked Coool:)")
